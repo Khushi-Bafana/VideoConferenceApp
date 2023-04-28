@@ -1,0 +1,162 @@
+<div class="ui container" style="min-width: 85%;">
+                <h1 class="ui header">Simple WebRTC Messenger</h1>
+                <hr>
+                <div class="ui two column stackable grid">
+                    <div class="ui ten wide column">
+                    <div class="ui segment">
+            
+                        <!-- Chat Room Form -->
+                        <div class="ui form">
+                        <div class="fields">
+                            <div class="field">
+                                <label>User Name</label>
+                                <input type="text" placeholder="Enter user name" id="username" name="username">
+                            </div>
+                            <div class="field">
+                                <label>Room</label>
+                                <input type="text" placeholder="Enter room name" id="roomName" name="roomName">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="ui buttons">
+                            <div id="create-btn" class="ui submit orange button">Create Room</div>
+                            <div class="or"></div>
+                            <div id="join-btn" class="ui submit green button">Join Room</div>
+                        </div>
+                        </div>
+                        <!-- Chat Room Messages -->
+                        <div id="chat"></div>
+                    </div>
+                    </div>
+                    <!-- Local Camera -->
+                    <div class="ui five wide column">
+                        <img id="local-image" class="ui large image" src="images/image.png">
+                        <video id="local-video" class="ui large image hidden" autoplay></video>
+                    </div>
+                </div>
+                <!-- Remote Cameras -->
+                <h2 class="ui center aligned header">Remote Cameras</h2><br>
+                <div id="remote-videos" class="ui stackable grid">
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>
+                </div>
+            </div><br><br><br><br>
+            8104579001
+
+//will keep this for window load for now but will replace it with button click later
+/*
+window.addEventListener('load', () => {
+    const chatTemplate = Handlebars.compile($('#chat-template').html());
+    const chatContentTemplate = Handlebars.compile($('#chat-content-template').html());
+    const chatEl = $('#chat');
+    const formEl = $('.form');
+    const messages = [];
+    let username;
+
+    //validation rules for create or join
+    formEl.form({
+        fields: {
+            roomName: 'empty',
+            username: 'empty',
+        },
+    });
+
+    //update chat mesage here
+    //code here
+    const updateChatMessages = () => {
+        const html = chatContentTemplate({ messages });
+        const chatContentEl = $('#chat-content');
+        chatContentEl.html(html);
+        //automatically scroll downwards
+        const scrollHeight = chatContentEl.prop('scrollHeight');
+        chatContentEl.animate({ scrollTop: scrollHeight }, 'slow');
+    };
+
+    //post local message
+    const postMessage = (message) => {
+        const chatMessage = {
+            username,
+            message,
+            postedOn: new Date().toLocaleString('en-GB'),
+        };
+        //send the message through sockets
+        messages.push(chatMessage);
+        $('#post-message').val('');
+        updateChatMessages();
+    };
+
+    //Display chat
+    const showChatRoom = (room) => {
+        formEl.hide();
+        const html = chatTemplate({ room });
+        chatEl.html(html);
+        const postForm = $('form');
+        postForm.form({
+            message: 'empty',
+        });
+        $('#post-btn').on('click', () => {
+            const message = $('#post-message').val();
+            postMessage(message);
+        });
+        $('#post-message').on('keyup', (event) => {
+            if (event.keyCode === 13) {
+                const message = $('#post-message').val();
+                postMessage(message);
+            }9049839482
+        });
+    };
+
+    //create new chat room
+    const createRoom = (roomName) => {
+        console.info(`Creating new room: ${roomName}`);
+        //code to create room here
+        //webrtc.createRoom(roomName, (err, name) => {
+        //    console.log("got here");
+        //    formEl.form('clear');
+        //    showChatRoom(name);
+        //    postMessage(`${username} created chatroom`);
+        //});
+    };
+
+    //join the existing chat room
+    const joinRoom = (roomName) => {
+        console.log(`Joining Room: ${roomName}`);
+        webrtc.joinRoom(roomName);
+        showChatRoom(roomName);
+        postMessage(`${username} joined chatroom`);
+    };
+
+    //recieve messages
+    webrtc.connection.on('message', (data) => {
+        if (data.type === 'chat') {
+            const message = data.payload;
+            message.push(message);
+            updateChatMessages();
+        }
+    });
+
+    //submit the chat room session
+    $('.submit').on('click', (event) => {
+        if (!formEl.form('is valid')) {
+          return false;
+        }
+        username = $('#username').val();
+        const roomName = $('#roomName').val().toLowerCase();
+        if (event.target.id === 'create-btn') {
+            createRoom(roomName);
+        } else {
+            joinRoom(roomName);
+        }
+        return false;
+    });
+});*/

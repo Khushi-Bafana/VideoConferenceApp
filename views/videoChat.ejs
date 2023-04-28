@@ -1,0 +1,187 @@
+<!Doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>LAIN VCA</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="scripts/semantic-ui-css/semantic.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+        <link rel='stylesheet' type='text/css' href='/css/navAndFooter.css' />
+        <link rel='stylesheet' type='text/css' href='/css/toastMessages.css' />
+        <link rel='stylesheet' type='text/css' href='/css/modal.css' />
+        <style>
+            html {  }
+            #chat-content { height: 180px;  overflow-y: scroll; }
+            video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            #local-video {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, 350px);
+                grid-auto-rows: 300px;
+            }
+            #remoteVideos {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, 350px);
+                grid-auto-rows: 300px;
+            }
+            #enlargeVideo {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, 800px);
+                grid-auto-rows: 700;
+            }
+            @media (max-width: 991.98px) {
+                #local-video { grid-template-columns: repeat(auto-fill, 315px); }
+                #remoteVideos { grid-template-columns: repeat(auto-fill, 315px); }
+            }
+            #remote-video {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, 300px);
+                grid-auto-rows: 300px;
+            }
+        </style>
+        <script>
+            const RoomId = "<%= roomId %>";
+            const userName = "<%= name %>";
+        </script>
+        <script defer src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+        <script src="/socket.io/socket.io.js" defer></script>
+    </head>
+    <body>
+        <div class="article-clean">
+            <header class="header bg-white">
+                <nav class="navbar navbar-expand-lg fixed-top py-3" style="background: rgb(37, 122, 148);">
+                    <div class="container"><a href="#" class="navbar-brand text-uppercase font-weight-bold" style="color: white;">LAIN VCA</a>
+                        <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler navbar-toggler-right"><i class="fa fa-bars"></i></button>
+                        
+                        <div id="navbarSupportedContent" class="collapse navbar-collapse">
+                            <ul class="navbar-nav ml-auto">
+                                <li class="nav-item active"><a href="" style="color: rgb(255, 255, 255)" class="nav-link text-uppercase font-weight-bold"><%= name %><span class="sr-only">(current)</span></a></li>
+                                <li class="nav-item"><a href="/getBack" class="btn btn-success">END MEET</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <span style="display: block; margin-bottom: 7em;"></span>
+            <div class="ui container" style="min-width: 85%;">
+                <h1 class="ui header">LAIN VIDEO CHAT APP</h1>
+                <hr>
+                <div class="ui two column stackable grid">
+                    <div class="ui ten wide column">
+                    <div class="ui segment">
+            
+                        <!-- Chat Room Form -->
+                        <div class="ui form">
+                        <div class="fields">
+                            <div class="field">
+                                <label>User Name</label>
+                                <input type="text" placeholder="Enter user name" id="username" name="username">
+                            </div>
+                            <div class="field">
+                                <label>Room</label>
+                                <input type="text" placeholder="Enter room name" id="roomName" name="roomName">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="ui buttons">
+                            <div id="create-btn" class="ui submit orange button">Create Room</div>
+                            <div class="or" style="z-index: 1;"></div>
+                            <div id="join-btn" class="ui submit green button">Join Room</div>
+                        </div>
+                        </div>
+                        <!-- Chat Room Messages -->
+                        <div id="chat"></div>
+                    </div>
+                    </div>
+                    <!-- Local Camera -->
+                    <div class="ui five wide column">
+                        <!--<img id="local-image" class="ui large image" src="images/image.png">-->
+                        <div id="local-video" class="ui large image"></div>
+                    </div>
+                </div>
+                <!--This is where i will put sound and video and audio on and off-->
+                <input type="button" id="videoStat" value="Video On" onclick="switchCameraOff(true)" class="btn btn-success" />
+                <input type="button" id="audioStat" value="Audio Off" onclick="switchAudioOff(true)" class="btn btn-success" />
+                <!-- Remote Cameras -->
+                <h2 class="ui center aligned header">Remote Cameras</h2><br>
+                <div id="remoteVideos" class="ui stackable grid">
+                    <!--
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>
+                    <div class="four wide column">
+                        <img class="ui centered large image" src="images/image.png">
+                    </div>-->
+                </div>
+            </div>
+            <div id="snackbar"></div>
+            <!--The Modal-->
+            <div id="videoModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                        <!--Maybe will write the name here or something-->
+                    </div>
+                    <div class="modal-body">
+                        <div id="enlargeVideo" class="ui large image hidden"></div>
+                    </div>
+                </div>
+            </div>
+            <!--TEMPLATES-->
+            <!--Chat Content Template-->
+            <script id="chat-content-template" type="text/x-handlebars-template">
+                {{#each chatLocalMessages}}
+                <div class="event">
+                    <div class="label">
+                        <i class="icon blue user"></i>
+                    </div>
+                    <div class="content">
+                        <div class="summary">
+                            <a href="#"> {{ username }}</a> posted on
+                            <div class="date">
+                                {{ postedOn }}
+                            </div>
+                        </div>
+                        <div class="extra text">
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </script>
+            <!--Chat Template-->
+            <script id="chat-template" type="text/x-handlebars-template">
+                <h3 class="ui orange header">Room ID -> <strong>{{ room }}</strong></h3>
+                <hr>
+                <div id="chat-content" class="ui feed"> </div>
+                <hr>
+                <div class="ui form">
+                    <div class="ui field">
+                        <label>Post Message</label>
+                        <textarea id="post-message" name="post-message" rows="1"></textarea>
+                    </div>
+                    <button id="post-btn" class="ui primary submit button">Send</button>
+                    <button id="close-btn" class="ui red submit button">Close</button>
+                </div>
+            </script>
+        </div>
+        <script src="scripts/jquery/dist/jquery.min.js"></script>
+        <script src="scripts/semantic-ui-css/semantic.min.js"></script>
+        <script src="scripts/handlebars/dist/handlebars.min.js "></script>
+        <script src="scripts/simplewebrtc/out/simplewebrtc-with-adapter.bundle.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/app.js" defer></script>
+    </body>
+</html>
